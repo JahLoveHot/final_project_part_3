@@ -11,9 +11,9 @@ sentiment_analyzer_url = os.getenv(
     'sentiment_analyzer_url',
     default="http://localhost:5050/")
 
-
-# def get_request(endpoint, **kwargs):
-
+# ----------------------------
+# GET request to backend
+# ----------------------------
 def get_request(endpoint, **kwargs):
     params = ""
     if kwargs:
@@ -26,7 +26,7 @@ def get_request(endpoint, **kwargs):
     if params:
         request_url += "?" + params
 
-    print("GET from {} ".format(request_url))
+    print(f"GET from {request_url}")
 
     try:
         response = requests.get(request_url)
@@ -35,12 +35,34 @@ def get_request(endpoint, **kwargs):
     except requests.exceptions.RequestException as e:
         print(f"Network exception occurred: {e}")
         return None
-# Add code for get requests to back end
+
+# ----------------------------
+# Future additions
+# ----------------------------
 
 # def analyze_review_sentiments(text):
-
-# request_url = sentiment_analyzer_url+"analyze/"+text
-# Add code for retrieving sentiments
+#     request_url = sentiment_analyzer_url + "analyze/" + text
+#     # Add code for retrieving sentiments
+def analyze_review_sentiments(text):
+    request_url = sentiment_analyzer_url + "analyze/" + text
+    try:
+        # Call get method of requests library with URL and parameters
+        response = requests.get(request_url)
+        response.raise_for_status()
+        return response.json()
+    except Exception as err:
+        print(f"Unexpected {err=}, {type(err)=}")
+        print("Network exception occurred")
+        return {"label": "neutral", "score": 0}
 
 # def post_review(data_dict):
-# Add code for posting review
+#     # Add code for posting review
+def post_review(data_dict):
+    request_url = backend_url + "/insert_review"
+    try:
+        response = requests.post(request_url, json=data_dict)
+        print(response.json())
+        return response.json()
+    except Exception as e:
+        print(f"Network exception occurred: {e}")
+        return {"status": 500, "message": "Failed to connect to backend"}
